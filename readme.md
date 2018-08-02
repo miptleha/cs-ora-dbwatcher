@@ -1,6 +1,6 @@
 # Purpose
 Console application that shows all changes in records for given set of tables.  
-Useful if dont want analize program code and want just know what changes in db it performs.  
+Useful if dont want to analize program code and want just know what changes in db was performed.  
 Can be applied not only for Oracle database but for all databases, where exist rowid analog.  
 
 # Sample
@@ -36,7 +36,7 @@ commit;
 
 * Watch program console or log\DbWatcher.log file
 
->tab1 (update): F1=15, F2=hello
->tab1 (before): F1=10, F2=hello
->tab1 (new): F1=20, F2=bay
->Deleted 1 rows from table tab2
+>tab1 (update): F1=15, F2=hello  
+>tab1 (before): F1=10, F2=hello  
+>tab1 (new): F1=20, F2=bay  
+>Deleted 1 rows from table tab2  
