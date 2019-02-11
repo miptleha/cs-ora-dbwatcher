@@ -1,14 +1,11 @@
-1. initial loading
-
+--1. prepare table
 create table tab1 (f1 int, f2 varchar2(100));
-create table tab2 (f1 clob);
 
-insert into tab1(f1, f2) values(10, 'hello');
-insert into tab2(f1) values('long text');
-
-2. changes after program starts
-
-delete from tab2;
+--2. made some changes (insert, update, delete)
 insert into tab1(f1, f2) values(20, 'bay');
+commit;
 update tab1 set f1=15 where f2='hello';
+commit;
+delete from tab2;
+delete from tab1;
 commit;
