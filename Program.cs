@@ -22,7 +22,6 @@ namespace DbWatcher
 
                 string tables = ConfigurationManager.AppSettings["Tables"];
 
-                Console.WriteLine("\nTo many text for console?\nFull log here: bin\\Debug\\log\\DbWatcher.log\n");
                 log.Debug("Scanning tables: " + tables);
 
                 var conStr = ConfigurationManager.ConnectionStrings["DbConnection"].ConnectionString;
@@ -56,7 +55,7 @@ namespace DbWatcher
 
 
                 var rowsCount = new Dictionary<string, int>();
-                var rowsHash = new Dictionary<string, string>();
+                var rowsHash = new Dictionary<string, Dictionary<string, string>>();
                 while (true)
                 {
                     foreach (var t in tables.Split(';', ',', ' '))
@@ -78,29 +77,16 @@ namespace DbWatcher
                             {
                                 while (r.Read())
                                 {
-                                    string row = "";
+                                    var row = new Dictionary<string, string>();
                                     for (int i = 1; i < r.FieldCount; i++)
-                                    {
-                                        if (row.Length > 0)
-                                            row += ", ";
-                                        row += rowsSchema[t][i - 1] + "=" + r[i].ToString();
-                                    }
-                                    row = row.Replace("\r", "").Replace("\n", " ");
-                                    rowsHash[t + "_" + r[0].ToString()] = row;
+                                        row.Add(rowsSchema[t][i - 1], r[i].ToString());
+                                    rowsHash[t + "#" + r[0].ToString()] = row;
                                 }
                             }
                         }
                         else
                         {
                             int cnt1 = rowsCount[t];
-                            if (cnt > cnt1)
-                            {
-                                //log.Debug(string.Format("Added {0} rows to table {1}", cnt - cnt1, t));
-                            }
-                            else if (cnt < cnt1)
-                            {
-                                log.Debug(string.Format("Deleted {0} rows from table {1}", cnt1 - cnt, t));
-                            }
                             rowsCount[t] = cnt;
 
                             //show content of new rows
@@ -108,34 +94,47 @@ namespace DbWatcher
                             foreach (var f in rowsSchema[t])
                                 cmd.CommandText += ", t." + f;
                             cmd.CommandText += " from " + t + " t";
+                            var rowsFound = new Dictionary<string, Dictionary<string, string>>();
                             using (var r = cmd.ExecuteReader())
                             {
                                 while (r.Read())
                                 {
-                                    string row = "";
+                                    var row = new Dictionary<string, string>();
                                     for (int i = 1; i < r.FieldCount; i++)
-                                    {
-                                        if (row.Length > 0)
-                                            row += ", ";
-                                        row += rowsSchema[t][i - 1] + "=" + r[i].ToString();
-                                    }
-                                    row = row.Replace("\r", "").Replace("\n", " ");
+                                        row.Add(rowsSchema[t][i - 1], r[i].ToString());
 
                                     string status = null;
-                                    if (!rowsHash.ContainsKey(t + "_" + r[0].ToString()))
+                                    var hash = t + "#" + r[0].ToString();
+                                    if (!rowsHash.ContainsKey(hash))
                                         status = "new";
-                                    else if (rowsHash[t + "_" + r[0].ToString()] != row)
+                                    else if (RowText(rowsHash[hash]) != RowText(row))
                                         status = "update";
 
                                     if (status != null)
                                     {
-                                        log.Debug(t + " (" + status + "): " + row);
                                         if (status == "update")
-                                            log.Debug(t + " (before): " + rowsHash[t + "_" + r[0].ToString()]);
-                                        rowsHash[t + "_" + r[0].ToString()] = row;
+                                            log.Debug(t + " (" + status + "): " + RowText(row, rowsHash[hash]));
+                                        else
+                                            log.Debug(t + " (" + status + "): " + RowText(row));
+                                        rowsHash[hash] = row;
                                     }
+                                    rowsFound.Add(hash, row);
                                 }
                             }
+
+                            var rowsRemove = new List<string>();
+                            foreach (var hash in rowsHash.Keys)
+                            {
+                                if (!hash.StartsWith(t + "#"))
+                                    continue;
+                                if (!rowsFound.ContainsKey(hash))
+                                {
+                                    log.Debug(t + " (delete): " + RowText(rowsHash[hash]));
+                                    rowsRemove.Add(hash);
+                                }
+                            }
+                            foreach (var hash in rowsRemove)
+                                rowsHash.Remove(hash);
                         }
                     }
 
@@ -146,6 +145,21 @@ namespace DbWatcher
             {
                 log.Error(ex);
             }
+        }
+
+        private static string RowText(Dictionary<string, string> row, Dictionary<string, string> row1 = null)
+        {
+            var res = "";
+            foreach (var f in row.Keys)
+            {
+                if (res.Length > 0)
+                    res += ", ";
+                res += f + "=" + row[f].ToString();
+                if (row1 != null && row1.ContainsKey(f) && row[f].ToString() != row1[f].ToString())
+                    res += " (" + row1[f].ToString() + ")";
+            }
+            res = res.Replace("\r", "").Replace("\n", " ");
+            return res;
         }
 
         static ILog log;
