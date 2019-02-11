@@ -16,7 +16,7 @@ create table tab2 (f1 clob);
 <add key="Tables" value="tab1,tab2"/>
 ```
 
-* Run program
+* Run program   
 Press Ctrl-F5 in Visual Studio 
 
 * Edit data in DB
