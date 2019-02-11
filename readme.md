@@ -36,10 +36,10 @@ end;
 ```
 
 * Watch program console or log\DbWatcher.log file
-> Scanning tables: tab1,tab2
-> Connection string: ...
-> tab1 (new): F1=10, F2=hello
-> tab2 (new): F1=long text
-> tab1 (update): F1=15 (10), F2=hello
-> tab1 (delete): F1=15, F2=hello
-> tab2 (delete): F1=long text 
+> Scanning tables: tab1,tab2   
+> Connection string: ...   
+> tab1 (new): F1=10, F2=hello   
+> tab2 (new): F1=long text   
+> tab1 (update): F1=15 (10), F2=hello   
+> tab1 (delete): F1=15, F2=hello   
+> tab2 (delete): F1=long text    
