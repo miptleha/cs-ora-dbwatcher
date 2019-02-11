@@ -4,7 +4,7 @@ Useful if you don't want to analize program code and want just know what changes
 Can be applied not only for Oracle database but for all databases, where exist rowid analog.  
 
 # Sample
-* Create tables in db
+* Create tables in DB
 ```
 create table tab1 (f1 int, f2 varchar2(100));
 create table tab2 (f1 clob);
@@ -19,7 +19,7 @@ create table tab2 (f1 clob);
 * Run program
 Press Ctrl-F5 in Visual Studio 
 
-* Edit data id db
+* Edit data in DB
 ```
 begin
 insert into tab1(f1, f2) values(10, 'hello');
