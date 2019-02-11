@@ -1,6 +1,6 @@
 # Purpose
 Console application that shows all changes in records for given set of tables.  
-Useful if dont want to analize program code and want just know what changes in db was performed.  
+Useful if you don't want to analize program code and want just know what changes in db was performed.  
 Can be applied not only for Oracle database but for all databases, where exist rowid analog.  
 
 # Sample
