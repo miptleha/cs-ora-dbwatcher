@@ -112,6 +112,7 @@ namespace DbWatcher
 
                                     if (status != null)
                                     {
+                                        Console.WriteLine();
                                         if (status == "update")
                                             log.Debug(t + " (" + status + "): " + RowText(row, rowsHash[hash]));
                                         else
@@ -129,6 +130,7 @@ namespace DbWatcher
                                     continue;
                                 if (!rowsFound.ContainsKey(hash))
                                 {
+                                    Console.WriteLine();
                                     log.Debug(t + " (delete): " + RowText(rowsHash[hash]));
                                     rowsRemove.Add(hash);
                                 }

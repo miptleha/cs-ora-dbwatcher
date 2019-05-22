@@ -27,13 +27,13 @@ namespace Log
         public void Error(string message, Exception ex)
         {
             log_text.Error(message, ex);
-            Console.WriteLine("{0}\n{1}", message, ex.ToString());
+            //Console.WriteLine("{0}\n{1}", message, ex.ToString());
         }
 
         public void Debug(string message)
         {
             log_text.Debug(message);
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
         }
     }
 }
